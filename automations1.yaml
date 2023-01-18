@@ -1,0 +1,624 @@
+- id: '1602895411112'
+  alias: Quran
+  description: ''
+  trigger:
+  - platform: state
+    entity_id: input_boolean.quran
+    from: 'off'
+    to: 'on'
+  condition: []
+  action:
+  - service: media_player.volume_set
+    data:
+      volume_level: 0.75
+    entity_id: media_player.living_room_speaker
+  - service: media_player.play_media
+    data:
+      media_content_type: music
+      media_content_id: http://10.0.0.4:8123/local/quran/{{range(1, 114)|random}}.mp3
+    entity_id: media_player.living_room_speaker
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 5
+      milliseconds: 0
+  - service: input_boolean.turn_off
+    data: {}
+    entity_id: input_boolean.quran
+  mode: single
+- id: '1603221439747'
+  alias: Play Sura 67 & 36
+  description: ''
+  trigger:
+  - platform: state
+    entity_id: input_boolean.play_yaseen_and_mulk
+    from: 'off'
+    to: 'on'
+  condition: []
+  action:
+  - service: media_player.play_media
+    data:
+      media_content_type: music
+      media_content_id: http://10.0.0.4:8123/local/quran/67.mp3
+    entity_id: media_player.living_room_speaker
+  - delay: '381'
+  - service: media_player.play_media
+    data:
+      media_content_type: music
+      media_content_id: http://10.0.0.4:8123/local/quran/36.mp3
+    entity_id: media_player.living_room_speaker
+  - service: input_boolean.turn_off
+    data: {}
+    entity_id: input_boolean.play_yaseen_and_mulk
+  mode: single
+- id: '1607435007592'
+  alias: Reset Adhan Stop
+  description: ''
+  trigger:
+  - platform: state
+    entity_id: input_boolean.stop_adhan
+    from: 'off'
+    to: 'on'
+  condition: []
+  action:
+  - delay:
+      hours: 1
+      minutes: 30
+      seconds: 0
+      milliseconds: 0
+  - service: input_boolean.turn_off
+    data: {}
+    entity_id: input_boolean.stop_adhan
+  mode: single
+- id: '1607465921744'
+  alias: Play Ayatul Kursi
+  description: ''
+  trigger:
+  - platform: state
+    entity_id: input_boolean.play_ayatul_kursi
+    from: 'off'
+    to: 'on'
+  condition: []
+  action:
+  - service: media_player.volume_set
+    data:
+      volume_level: 0.75
+    entity_id: media_player.living_room_speaker
+  - delay: '1'
+  - service: media_player.play_media
+    data:
+      media_content_type: music
+      media_content_id: http://10.0.0.4:8123/local/ak.mp3
+    entity_id: media_player.living_room_speaker
+  - delay: '5'
+  - service: input_boolean.turn_off
+    data: {}
+    entity_id: input_boolean.play_ayatul_kursi
+  mode: single
+- id: '1612145599220'
+  alias: MC-Server Check
+  description: ''
+  trigger:
+  - platform: state
+    entity_id: binary_sensor.minecraft_server_status
+    from: Connected
+    to: Disconnected
+  condition: []
+  action:
+  - service: notify.notify
+    data:
+      message: '*** THE MC-SERVER IS DOWN ***'
+  - delay:
+      hours: 0
+      minutes: 1
+      seconds: 0
+      milliseconds: 0
+  - service: notify.notify
+    data:
+      message: '*** THE MC-SERVER IS DOWN ***'
+  - delay:
+      hours: 0
+      minutes: 1
+      seconds: 0
+      milliseconds: 0
+  - service: notify.notify
+    data:
+      message: '*** THE MC-SERVER IS DOWN ***'
+  - delay:
+      hours: 0
+      minutes: 1
+      seconds: 0
+      milliseconds: 0
+  - service: notify.notify
+    data:
+      message: '*** THE MC-SERVER IS DOWN ***'
+  - delay:
+      hours: 0
+      minutes: 1
+      seconds: 0
+      milliseconds: 0
+  - service: notify.notify
+    data:
+      message: '*** THE MC-SERVER IS DOWN ***'
+  mode: single
+- id: '1621615927592'
+  alias: Fajr
+  description: ''
+  trigger:
+  - platform: template
+    value_template: '{{ states("sensor.time") == states("sensor.ptf_fajr") }}'
+  condition: []
+  action:
+  - service: media_player.media_pause
+    target:
+      entity_id: media_player.shield_2
+  - service: media_player.volume_set
+    data:
+      volume_level: 0.5
+    target:
+      entity_id: media_player.home_group
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 30
+      milliseconds: 0
+  - service: media_player.play_media
+    target:
+      entity_id: media_player.home_group
+    data:
+      media_content_id: http://10.0.0.4:8123/local/fajr-adhan.mp3
+      media_content_type: music
+  - delay:
+      hours: 0
+      minutes: 4
+      seconds: 35
+      milliseconds: 0
+  - service: media_player.play_media
+    data:
+      media_content_id: http://10.0.0.4:8123/local/daa.mp3
+      media_content_type: music
+    target:
+      entity_id: media_player.home_group
+  mode: single
+- id: '1621616641108'
+  alias: Dhuhr
+  description: ''
+  trigger:
+  - platform: template
+    value_template: '{{ states("sensor.time") == states("sensor.ptf_dhuhr") }}'
+    alias: Dhuhr
+  condition:
+  - condition: state
+    entity_id: input_boolean.stop_adhan
+    state: 'off'
+  - condition: state
+    entity_id: binary_sensor.workday_sensor
+    state: 'off'
+    enabled: false
+  - condition: state
+    entity_id: schedule.work_schedule
+    state: 'off'
+  action:
+  - service: media_player.media_pause
+    target:
+      entity_id: media_player.shield_2
+    data: {}
+  - service: media_player.volume_set
+    target:
+      entity_id: media_player.master_bedroom_speaker
+    data:
+      volume_level: 0.35
+  - service: media_player.volume_set
+    target:
+      entity_id: media_player.home_group
+    data:
+      volume_level: 0.55
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 1
+      milliseconds: 0
+  - service: media_player.play_media
+    data:
+      media_content_id: http://10.0.0.4:8123/local/mba.mp3
+      media_content_type: music
+    target:
+      entity_id: media_player.home_group
+  - delay:
+      hours: 0
+      minutes: 3
+      seconds: 56
+      milliseconds: 0
+  - service: media_player.play_media
+    data:
+      media_content_id: http://10.0.0.4:8123/local/daa.mp3
+      media_content_type: music
+    target:
+      entity_id: media_player.home_group
+  mode: single
+- id: '1621616956217'
+  alias: Asr
+  description: ''
+  trigger:
+  - platform: template
+    value_template: '{{ states("sensor.time") == states("sensor.ptf_asr") }}'
+    alias: Asr
+  condition:
+  - condition: state
+    entity_id: input_boolean.stop_adhan
+    state: 'off'
+  - condition: state
+    entity_id: binary_sensor.workday_sensor
+    state: 'off'
+    enabled: false
+  - condition: state
+    entity_id: schedule.work_schedule
+    state: 'off'
+  action:
+  - service: media_player.media_pause
+    target:
+      entity_id: media_player.shield_2
+    data: {}
+  - service: media_player.volume_set
+    target:
+      entity_id: media_player.master_bedroom_speaker
+    data:
+      volume_level: 0.35
+  - service: media_player.volume_set
+    target:
+      entity_id: media_player.home_group
+    data:
+      volume_level: 0.55
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 1
+      milliseconds: 0
+  - service: media_player.play_media
+    target:
+      entity_id: media_player.home_group
+    data:
+      media_content_id: http://10.0.0.4:8123/local/mba.mp3
+      media_content_type: music
+  - delay:
+      hours: 0
+      minutes: 3
+      seconds: 56
+      milliseconds: 0
+  - service: media_player.play_media
+    data:
+      media_content_id: http://10.0.0.4:8123/local/daa.mp3
+      media_content_type: music
+    target:
+      entity_id: media_player.home_group
+  mode: single
+- id: '1621617259204'
+  alias: Maghrib
+  description: ''
+  trigger:
+  - platform: template
+    value_template: '{{ states("sensor.time") == states("sensor.ptf_maghrib") }}'
+    alias: Maghrib
+  condition:
+  - condition: state
+    entity_id: input_boolean.ramadan
+    state: 'off'
+  - condition: state
+    entity_id: input_boolean.stop_adhan
+    state: 'off'
+  - condition: state
+    entity_id: schedule.work_schedule
+    state: 'off'
+  action:
+  - service: media_player.media_pause
+    target:
+      entity_id: media_player.shield_2
+    data: {}
+  - service: media_player.volume_set
+    target:
+      entity_id: media_player.master_bedroom_speaker
+    data:
+      volume_level: 0.35
+  - service: media_player.volume_set
+    target:
+      entity_id: media_player.home_group
+    data:
+      volume_level: 0.55
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 1
+      milliseconds: 0
+  - service: media_player.play_media
+    target:
+      entity_id: media_player.home_group
+    data:
+      media_content_id: http://10.0.0.4:8123/local/mba.mp3
+      media_content_type: music
+  - delay:
+      hours: 0
+      minutes: 3
+      seconds: 56
+      milliseconds: 0
+  - service: media_player.play_media
+    target:
+      entity_id: media_player.home_group
+    data:
+      media_content_id: http://10.0.0.4:8123/local/daa.mp3
+      media_content_type: music
+  mode: single
+- id: '1621617315157'
+  alias: R-Maghrib
+  description: ''
+  trigger:
+  - platform: template
+    value_template: '{{ states("sensor.time") == states("sensor.ptf_maghrib") }}'
+  condition:
+  - condition: state
+    entity_id: input_boolean.ramadan
+    state: 'on'
+  - condition: state
+    entity_id: input_boolean.stop_adhan
+    state: 'off'
+  action:
+  - service: media_player.media_pause
+    target:
+      entity_id: media_player.shield_2
+  - service: media_player.volume_set
+    target:
+      entity_id: media_player.home_group
+    data:
+      volume_level: 0.55
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 1
+      milliseconds: 0
+  - service: media_player.play_media
+    data:
+      media_content_id: http://10.0.0.4:8123/local/Iftar_Dua.mp3
+      media_content_type: music
+    target:
+      entity_id: media_player.living_room_speaker
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 25
+      milliseconds: 0
+  - service: media_player.play_media
+    target:
+      entity_id: media_player.home_group
+    data:
+      media_content_id: http://10.0.0.4:8123/local/mba.mp3
+      media_content_type: music
+  - delay:
+      hours: 0
+      minutes: 3
+      seconds: 56
+      milliseconds: 0
+  - service: media_player.play_media
+    target:
+      entity_id: media_player.home_group
+    data:
+      media_content_id: http://10.0.0.4:8123/local/daa.mp3
+      media_content_type: music
+  mode: single
+- id: '1621618207439'
+  alias: Isha
+  description: ''
+  trigger:
+  - platform: template
+    value_template: '{{ states("sensor.time") == states("sensor.ptf_isha") }}'
+    alias: Isha
+  condition:
+  - condition: state
+    entity_id: input_boolean.stop_adhan
+    state: 'off'
+  - condition: state
+    entity_id: schedule.work_schedule
+    state: 'off'
+  action:
+  - service: media_player.media_pause
+    target:
+      entity_id: media_player.shield_2
+    data: {}
+  - service: media_player.volume_set
+    target:
+      entity_id: media_player.master_bedroom_speaker
+    data:
+      volume_level: 0.35
+  - service: media_player.volume_set
+    target:
+      entity_id: media_player.home_group
+    data:
+      volume_level: 0.55
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 1
+      milliseconds: 0
+  - service: media_player.play_media
+    target:
+      entity_id: media_player.home_group
+    data:
+      media_content_id: http://10.0.0.4:8123/local/mba.mp3
+      media_content_type: music
+  - delay:
+      hours: 0
+      minutes: 3
+      seconds: 56
+      milliseconds: 0
+  - service: media_player.play_media
+    target:
+      entity_id: media_player.home_group
+    data:
+      media_content_id: http://10.0.0.4:8123/local/daa.mp3
+      media_content_type: music
+  mode: single
+- id: '1621625663173'
+  alias: 3 Qul
+  description: ''
+  trigger:
+  - platform: template
+    value_template: '{{ states("sensor.ptf_fajr") == states("sensor.30m_before") }}'
+    alias: Fajr
+  - platform: template
+    value_template: '{{ states("sensor.ptf_maghrib") == states("sensor.20m_after")
+      }}'
+    alias: Maghrib
+  - platform: template
+    value_template: '{{ states("sensor.ptf_isha") == states("sensor.20m_after") }}'
+    alias: Isha
+  - platform: template
+    value_template: '{{ states("sensor.ptf_dhuhr") == states("sensor.20m_after") }}'
+    alias: Dhuhr
+  - platform: template
+    value_template: '{{ states("sensor.ptf_asr") == states("sensor.20m_after") }}'
+    alias: Asr
+  condition:
+  - condition: state
+    entity_id: input_boolean.stop_adhan
+    state: 'off'
+  - condition: state
+    entity_id: input_boolean.ramadan
+    state: 'off'
+  - condition: state
+    entity_id: schedule.work_schedule
+    state: 'off'
+  action:
+  - service: media_player.volume_set
+    data:
+      volume_level: 0.75
+    target:
+      entity_id: media_player.living_room_speaker
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 1
+      milliseconds: 0
+  - service: media_player.play_media
+    target:
+      entity_id: media_player.living_room_speaker
+    data:
+      media_content_id: http://10.0.0.4:8123/local/ak.mp3
+      media_content_type: music
+  - delay:
+      hours: 0
+      minutes: 2
+      seconds: 9
+      milliseconds: 0
+  - service: media_player.play_media
+    target:
+      entity_id: media_player.living_room_speaker
+    data:
+      media_content_id: http://10.0.0.4:8123/local/quran/112.mp3
+      media_content_type: music
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 31
+      milliseconds: 0
+  - service: media_player.play_media
+    target:
+      entity_id: media_player.living_room_speaker
+    data:
+      media_content_id: http://10.0.0.4:8123/local/quran/113.mp3
+      media_content_type: music
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 41
+      milliseconds: 0
+  - service: media_player.play_media
+    target:
+      entity_id: media_player.living_room_speaker
+    data:
+      media_content_id: http://10.0.0.4:8123/local/quran/114.mp3
+      media_content_type: music
+  mode: single
+- id: '1626052454626'
+  alias: Wakeup Call
+  description: ''
+  trigger:
+  - platform: template
+    value_template: '{{ states("sensor.ptf_fajr") == states("sensor.30m_before") }}'
+  condition: []
+  action:
+  - service: media_player.volume_set
+    target:
+      entity_id: media_player.master_bedroom_speaker
+    data:
+      volume_level: 1
+  - service: media_player.play_media
+    target:
+      entity_id: media_player.master_bedroom_speaker
+    data:
+      media_content_id: http://10.0.0.4:8123/local/ak.mp3
+      media_content_type: music
+  mode: single
+- id: '1656644313075'
+  alias: 3 Qul Weekend
+  description: ''
+  trigger:
+  - platform: template
+    value_template: '{{ states("sensor.ptf_dhuhr") == states("sensor.20m_after") }}'
+  - platform: template
+    value_template: '{{ states("sensor.ptf_asr") == states("sensor.20m_after") }}'
+  condition:
+  - condition: state
+    entity_id: input_boolean.stop_adhan
+    state: 'off'
+  - condition: state
+    entity_id: binary_sensor.workday_sensor
+    state: 'off'
+  action:
+  - service: media_player.volume_set
+    data:
+      volume_level: 0.75
+    target:
+      entity_id: media_player.living_room_speaker
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 1
+      milliseconds: 0
+  - service: media_player.play_media
+    target:
+      entity_id: media_player.living_room_speaker
+    data:
+      media_content_id: http://10.0.0.4:8123/local/ak.mp3
+      media_content_type: music
+  - delay:
+      hours: 0
+      minutes: 2
+      seconds: 9
+      milliseconds: 0
+  - service: media_player.play_media
+    target:
+      entity_id: media_player.living_room_speaker
+    data:
+      media_content_id: http://10.0.0.4:8123/local/quran/112.mp3
+      media_content_type: music
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 31
+      milliseconds: 0
+  - service: media_player.play_media
+    target:
+      entity_id: media_player.living_room_speaker
+    data:
+      media_content_id: http://10.0.0.4:8123/local/quran/113.mp3
+      media_content_type: music
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 41
+      milliseconds: 0
+  - service: media_player.play_media
+    target:
+      entity_id: media_player.living_room_speaker
+    data:
+      media_content_id: http://10.0.0.4:8123/local/quran/114.mp3
+      media_content_type: music
+  mode: single
